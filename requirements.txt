@@ -1,0 +1,4 @@
+appium-python-client==1.2.0
+pytest==6.2.5
+behave
+selenium
