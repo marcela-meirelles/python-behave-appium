@@ -168,3 +168,4 @@ venv/
 *.log
 node_modules/
 Appium
+allure-report/
