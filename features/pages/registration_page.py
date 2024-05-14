@@ -2,6 +2,9 @@ class RegistrationPage:
     def __init__(self, driver):
         self.driver = driver
 
+    def click_none_of_the_above(self):
+        self.driver.find_element_by_id('com.google.android.gms:id/button_area').click()
+
     def enter_phone_number(self, phone_number):
         # replace 'phone_number_locator' with the actual locator
         self.driver.find_element_by_id('com.hdw.james.rider:id/input').send_keys(phone_number)

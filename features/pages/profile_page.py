@@ -1,11 +1,21 @@
-class ProfilePage:
+from features.pages.base_page import BasePage
+
+
+class ProfilePage(BasePage):
     def __init__(self, driver):
         self.driver = driver
 
-    def enter_details(self, username, email):
-        # replace 'username_locator' and 'email_locator' with the actual locators
-        self.driver.find_element_by_id('username_locator').send_keys(username)
-        self.driver.find_element_by_id('email_locator').send_keys(email)
+    def open_profile(self):
+        self.driver.find_element_by_xpath('//android.widget.FrameLayout[@resource-id="com.hdw.james.rider:id/profileContainer"]/android.view.ViewGroup').click()
+        
+    def set_profile_photo(self):
+        self.driver.find_element_by_id('com.hdw.james.rider:id/profileCameraButton').click()
+        self.driver.find_element_by_id('com.hdw.james.rider:id/imagePickeGalleryRow').click()
+        # implement the logic to select a photo from the gallery
+        
+    def enter_details(self, firstname, lastname):
+        self.driver.find_element_by_id('com.hdw.james.rider:id/firstNameInput').send_keys(firstname)
+        self.driver.find_element_by_id('com.hdw.james.rider:id/lastNameInput').send_keys(lastname)
 
     def press_save_button(self):
         # replace 'save_button_locator' with the actual locator

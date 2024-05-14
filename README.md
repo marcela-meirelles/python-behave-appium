@@ -24,3 +24,5 @@ appium-python-client: https://pypi.org/project/Appium-Python-Client/
 behave: https://behave.readthedocs.io/en/latest/
 
 allure: https://allurereport.org/docs/behave/
+
+Android Studio has been used to emulate device
