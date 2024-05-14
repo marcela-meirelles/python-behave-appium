@@ -3,7 +3,7 @@ from features.pages.base_page import BasePage
 class AccountSettingsPage(BasePage):
     def __init__(self, driver):
         self.driver = driver
-
+        
     def change_password(self, currentPassword, newPassword):
         self.driver.find_element_by_xpath('//androidx.recyclerview.widget.RecyclerView[@resource-id="com.hdw.james.rider:id/accountMenuRecycler"]/android.view.ViewGroup[3]').click()
         self.driver.find_element_by_id('com.hdw.james.rider:id/currentPasswordInput').send_keys(currentPassword)
