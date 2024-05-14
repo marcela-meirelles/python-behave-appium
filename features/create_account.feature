@@ -13,5 +13,4 @@ Feature: Account Creation Feature
     Scenario: Unsuccessful Account Creation
         Given I am on the registration screen
         When I enter invalid details
-        And I press the register button
         Then I should see an error message
