@@ -1,23 +1,31 @@
 from features.pages.base_page import BasePage
+from helper import wait_until_element_visible
+from selenium.webdriver.common.by import By
 
 class MainMenu(BasePage):
     def __init__(self, driver):
         self.driver = driver
 
     def open_profile(self):
-        self.driver.find_element_by_xpath('//android.widget.FrameLayout[@resource-id="com.hdw.james.rider:id/profileContainer"]/android.view.ViewGroup').click()
+        open_profile_btn = wait_until_element_visible(self.driver, By.XPATH, '//android.widget.FrameLayout[@resource-id="com.hdw.james.rider:id/profileContainer"]/android.view.ViewGroup')
+        open_profile_btn.click()
         
     def open_settings(self):
-        self.driver.find_element_by_id('com.hdw.james.rider:id/settingsContainer').click()
+        open_settings_btn = wait_until_element_visible(self.driver, By.XPATH, '//android.widget.TextView[@resource-id="com.hdw.james.rider:id/title" and @text="SETTINGS"]')
+        open_settings_btn.click()
         
     def open_previous_rides(self):
-        self.driver.find_element_by_id('com.hdw.james.rider:id/previousRidesContainer').click()
+        open_previous_rides_btn = wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/previousRidesContainer')
+        open_previous_rides_btn.click()
         
     def open_my_drivers(self):
-        self.driver.find_element_by_id('com.hdw.james.rider:id/myDriversContainer').click()
+        open_my_drivers_btn = wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/myDriversContainer')
+        open_my_drivers_btn.click()
         
     def open_legal(self):
-        self.driver.find_element_by_id('com.hdw.james.rider:id/legalContainer').click()
+        open_legal_btn = wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/legalContainer')
+        open_legal_btn.click()
         
     def sign_out(self):
-        self.driver.find_element_by_id('com.hdw.james.rider:id/signOutContainer').click()
+        sign_out_btn = wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/signOutContainer')
+        sign_out_btn.click()

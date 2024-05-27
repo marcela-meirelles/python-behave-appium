@@ -1,65 +1,116 @@
+from appium.webdriver.common.appiumby import AppiumBy
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from helper import wait_until_element_visible
+from selenium.webdriver.common.by import By
+import time
+
 class RegistrationPage:
     def __init__(self, driver):
         self.driver = driver
+        
+    def click_Get_Started(self):
+        element = wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/getStartedButton')
+        element.click()
 
     def click_none_of_the_above(self):
-        self.driver.find_element_by_id('com.google.android.gms:id/button_area').click()
-
+        current_context = self.driver.current_context
+        self.driver.switch_to.context("NATIVE_APP")
+        alert = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((AppiumBy.ID, "com.google.android.gms:id/cancel"))
+        )
+        alert.click()
+        self.driver.switch_to.context(current_context)
+        
+    def select_country_code(self, country_code):
+        element = wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/spinner')
+        element.click()
+        
+        current_context = self.driver.current_context
+        self.driver.switch_to.context("NATIVE_APP")
+        country_code_list = alert = WebDriverWait(self.driver, 10).until(
+                    EC.presence_of_element_located((AppiumBy.CLASS_NAME, "android.widget.ListView"))
+                )
+        scroll_to_element = "new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().textContains(\"" + country_code + "\"))"
+        country_code_item = self.driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR, scroll_to_element)
+        country_code_item.click()
+        self.driver.switch_to.context(current_context)
+        
     def enter_phone_number(self, phone_number):
-        # replace 'phone_number_locator' with the actual locator
-        self.driver.find_element_by_id('com.hdw.james.rider:id/input').send_keys(phone_number)
-        self.driver.find_element_by_id('com.hdw.james.rider:id/continueButton').click() 
+        phone_number_input = wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/input')
+        phone_number_input.send_keys(phone_number)
+        continue_button = wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/continueButton')
+        continue_button.click() 
 
     def enter_verification_code(self, code):
-        self.driver.find_element_by_id('com.hdw.james.rider:id/continueButton').click() 
-        self.driver.find_element_by_xpath('(//android.widget.EditText[@resource-id="com.hdw.james.rider:id/inputEditText"])[1]').send_keys(code)
-        # xpath locator for James code: (//android.widget.EditText[@resource-id="com.hdw.james.rider:id/inputEditText"])[1]   
-        # 	(//android.widget.EditText[@resource-id="com.hdw.james.rider:id/inputEditText"])[2]
-        # 	(//android.widget.EditText[@resource-id="com.hdw.james.rider:id/inputEditText"])[3]
-        # 	(//android.widget.EditText[@resource-id="com.hdw.james.rider:id/inputEditText"])[4]
-        # 	(//android.widget.EditText[@resource-id="com.hdw.james.rider:id/inputEditText"])[5]
-        # 	(//android.widget.EditText[@resource-id="com.hdw.james.rider:id/inputEditText"])[6]
+        continue_button = wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/continueButton')
+        continue_button.click() 
 
-    def enter_full_name(self, first_name, last_name):
-        self.driver.find_element_by_id('com.hdw.james.rider:id/firstNameInput').send_keys(first_name)
-        self.driver.find_element_by_id('com.hdw.james.rider:id/lastNameInput').send_keys(last_name)
-        self.driver.find_element_by_id('com.hdw.james.rider:id/buttonContinue').click()
+        # Split the code into individual digits
+        code_digits = list(str(code))
 
-    def review_splash_and_continue(self):
-        self.driver.find_element_by_id('com.hdw.james.rider:id/splash_title').is_displayed()
-        self.driver.find_element_by_id('com.hdw.james.rider:id/splash_continue_button').click() 
+        # Send each digit to the corresponding input field
+        for i in range(len(code_digits)):
+            xpath_locator = f'(//android.widget.EditText[@resource-id="com.hdw.james.rider:id/inputEditText"])[{i+1}]'
+            input_field = wait_until_element_visible(self.driver, By.XPATH, xpath_locator)
+            input_field.send_keys(code_digits[i])
+        
+        continue_button = wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/continueButton')
+        continue_button.click() 
+        
+    def allow_permissions(self):
+        allow_locations_button = wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/permissionsLocationButton')
+        allow_locations_button.click()
+        
+        current_context = self.driver.current_context
+        self.driver.switch_to.context("NATIVE_APP")
+        location_only_this_time_button = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((AppiumBy.ID, "com.android.permissioncontroller:id/permission_allow_one_time_button"))
+        )
+        location_only_this_time_button.click()
+        self.driver.switch_to.context(current_context)
+        
+        #  use if notifications need to be set up
+        allow_notifications_button = wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/permissionsNotificationButton')
+        allow_notifications_button.click()
+        self.driver.switch_to.context("NATIVE_APP")
+        notifications_allow_button = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((AppiumBy.ID, "com.android.permissioncontroller:id/permission_allow_button"))
+        )
+        notifications_allow_button.click()
+        self.driver.switch_to.context(current_context)
+        
+        try:
+            continue_button = wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/permissionsContinueButton')
+            continue_button.click()
+        except:
+            pass
 
-    def accept_location_permission(self):
-        self.driver.find_element_by_id('com.hdw.james.rider:id/askPermissionTitle').is_displayed()
-        self.driver.find_element_by_id('com.hdw.james.rider:id/askPermissionAlertImage').click()
-        # verify permission options are displayed
-        self.driver.find_element_by_id('com.android.permissioncontroller:id/permission_message').is_displayed()
-        self.driver.find_element_by_id('com.android.permissioncontroller:id/permission_allow_foreground_only_button').is_displayed()
-        self.driver.find_element_by_id('com.android.permissioncontroller:id/permission_deny_button').is_displayed()
-        self.driver.find_element_by_id('com.android.permissioncontroller:id/permission_allow_one_time_button').is_displayed()
-        # select permission option
-        self.driver.find_element_by_id('com.android.permissioncontroller:id/permission_allow_foreground_only_button').click()
+    # def enter_full_name(self, first_name, last_name):
+    #     wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/firstNameInput').send_keys(first_name)
+    #     wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/lastNameInput').send_keys(last_name)
+    #     wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/buttonContinue').click()
+        
+    # def review_splash_and_continue(self):
+    #     wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/splash_title').is_displayed()
+    #     wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/splash_continue_button').click()
 
-    def skip_onboarding(self):
-        self.driver.find_element_by_id('com.hdw.james.rider:id/SKIP_ONBOARDING').click()
+    # def skip_onboarding(self):
+    #     self.driver.find_element_by_id('com.hdw.james.rider:id/SKIP_ONBOARDING').click()
 
-    def home_screen_dashboard_is_displayed(self):
-        self.driver.find_element_by_id('com.hdw.james.rider:id/dashboardTopBar').is_displayed()
+    def get_main_menu(self):
+        toolbar = wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/MAIN_MENU_ID')
+        return toolbar
 
-    def enter_details(self, username, password, email):
-        # replace 'username_locator', 'password_locator', and 'email_locator' with the actual locators
-        self.driver.find_element_by_id('username_locator').send_keys(username)
-        self.driver.find_element_by_id('password_locator').send_keys(password)
-        self.driver.find_element_by_id('email_locator').send_keys(email)
+    # def enter_details(self, username, password, email):
+    #     # replace 'username_locator', 'password_locator', and 'email_locator' with the actual locators
+    #     self.driver.find_element_by_id('username_locator').send_keys(username)
+    #     self.driver.find_element_by_id('password_locator').send_keys(password)
+    #     self.driver.find_element_by_id('email_locator').send_keys(email)
 
-    def press_register_button(self):
-        # replace 'register_button_locator' with the actual locator
-        self.driver.find_element_by_id('register_button_locator').click()
-
-    def get_success_message(self):
-        # replace 'success_message_locator' with the actual locator
-        return self.driver.find_element_by_id('success_message_locator').text
+    # def press_register_button(self):
+    #     self.driver.find_element_by_id('register_button_locator').click()
 
     def get_error_message(self):
-        # replace 'error_message_locator' with the actual locator
-        return self.driver.find_element_by_id('error_message_locator').text
+        error_msg = wait_until_element_visible(self.driver, By.ID, 'com.hdw.james.rider:id/snackbar_text').text
+        return error_msg

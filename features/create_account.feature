@@ -7,9 +7,10 @@ Feature: Account Creation Feature
         Given I am on the registration screen
         When I enter a valid phone number
         And I enter a valid verification code
-        And I enter a valid full name and finish the registration process
+        And I allow permissions and finish the registration process
         Then I should see the home screen dashboard
 
+    @smoke @regression
     Scenario: Unsuccessful Account Creation
         Given I am on the registration screen
         When I enter invalid details
